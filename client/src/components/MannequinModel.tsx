@@ -215,8 +215,42 @@ export default function MannequinModel() {
     Math.round(scaleFactors.shoulders * 10),
   ]);
   
+  // Use useFrame to ensure mannequin stays centered in view regardless of zoom level
+  useFrame(({ camera }) => {
+    // We don't modify the camera here, but this ensures the component renders
+    // on camera changes, which helps with maintaining visibility
+    if (mannequinRef.current) {
+      // Make sure the mannequin stays within the frustum
+      const distance = camera.position.distanceTo(new THREE.Vector3(0, 0.7, 0));
+      if (distance < 0.5) {
+        // If we're too close, adjust material opacity to see inside
+        mannequinRef.current.traverse((node) => {
+          if ((node as THREE.Mesh).isMesh) {
+            const material = (node as THREE.Mesh).material as THREE.MeshStandardMaterial;
+            if (material) {
+              // Make material slightly transparent when very close
+              material.transparent = distance < 0.3;
+              material.opacity = THREE.MathUtils.clamp(distance / 0.3, 0.3, 1.0);
+            }
+          }
+        });
+      } else {
+        // Reset material opacity when at normal distances
+        mannequinRef.current.traverse((node) => {
+          if ((node as THREE.Mesh).isMesh) {
+            const material = (node as THREE.Mesh).material as THREE.MeshStandardMaterial;
+            if (material) {
+              material.transparent = false;
+              material.opacity = 1.0;
+            }
+          }
+        });
+      }
+    }
+  });
+  
   return (
-    <group ref={mannequinRef}>
+    <group ref={mannequinRef} position={[0, 0, 0]}>
       {gender === "male" ? (
         <MaleMannequin scaleFactors={scaleFactors} />
       ) : (

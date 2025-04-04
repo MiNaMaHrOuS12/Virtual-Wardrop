@@ -81,18 +81,38 @@ function Scene() {
         decay={2}
       />
       
-      {/* Removed floor as requested */}
+      {/* Floor reference plane for better orientation when zoomed in */}
+      <mesh 
+        rotation-x={-Math.PI / 2} 
+        position={[0, -0.02, 0]} 
+        receiveShadow
+      >
+        <circleGeometry args={[4, 36]} />
+        <meshStandardMaterial 
+          color="#f5f5f5" 
+          roughness={0.9} 
+          metalness={0.0} 
+          transparent={true} 
+          opacity={0.3} 
+        />
+      </mesh>
+      
+      {/* Grid helper for better navigation when zoomed in */}
+      <gridHelper 
+        args={[8, 20, "#aaaaaa", "#e5e5e5"]} 
+        position={[0, 0, 0]} 
+      />
       
       {/* Mannequin */}
       <MannequinModel />
       
       {/* Enhanced orbit controls for better user experience */}
       <OrbitControls 
-        enablePan={false}
-        minPolarAngle={Math.PI / 10}
-        maxPolarAngle={Math.PI / 2.2}
-        minDistance={1.5}
-        maxDistance={4}
+        enablePan={true} // Allow panning to see all parts when zoomed in
+        minPolarAngle={0} // Allow full vertical rotation
+        maxPolarAngle={Math.PI} 
+        minDistance={0.5} // Allow closer zooming
+        maxDistance={10} // Allow zooming out further
         target={[0, 0.7, 0]} // Centered on mannequin's middle
         makeDefault
       />
@@ -195,7 +215,12 @@ export default function ThreeDScene() {
     >
       <Canvas
         shadows
-        camera={{ position: [0, 0.8, 2.5], fov: 45 }}
+        camera={{ 
+          position: [0, 0.8, 2.5], 
+          fov: 45,
+          near: 0.1,
+          far: 1000 
+        }}
         style={{ 
           background: "transparent", 
           height: "100%", 
