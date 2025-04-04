@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Settings, Home, Menu } from "lucide-react";
+import { Settings, Home, Menu, Calendar } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useBrandSettings } from "@/lib/stores/useBrandSettings";
 import { cn } from "@/lib/utils";
@@ -72,6 +72,12 @@ export default function Header() {
             </Link>
           </Button>
           <Button asChild variant="ghost">
+            <Link to="/booking">
+              <Calendar className="mr-2 h-4 w-4" />
+              Schedule Meeting
+            </Link>
+          </Button>
+          <Button asChild variant="ghost">
             <Link to="/settings">
               <Settings className="mr-2 h-4 w-4" />
               Brand Settings
@@ -111,6 +117,17 @@ export default function Header() {
             <Link to="/">
               <Home className="mr-2 h-4 w-4" />
               Home
+            </Link>
+          </Button>
+          <Button 
+            asChild 
+            variant="ghost" 
+            className="justify-start"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            <Link to="/booking">
+              <Calendar className="mr-2 h-4 w-4" />
+              Schedule Meeting
             </Link>
           </Button>
           <Button 
