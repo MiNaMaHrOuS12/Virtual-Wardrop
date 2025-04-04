@@ -30,19 +30,20 @@ function Scene() {
       {/* Ambient light - fill light - increased for better visibility */}
       <ambientLight intensity={1.5} />
       
-      {/* Key light - main directional light - increased brightness */}
+      {/* Key light - main directional light - improved settings for sharper shadows */}
       <directionalLight 
         position={[4, 6, 4]} 
-        intensity={3.0} 
+        intensity={3.5} 
         castShadow 
         shadow-mapSize={[2048, 2048]}
-        shadow-bias={-0.0001}
+        shadow-bias={-0.00005}
         shadow-camera-left={-5}
         shadow-camera-right={5}
         shadow-camera-top={5}
         shadow-camera-bottom={-5}
         shadow-camera-near={0.1}
         shadow-camera-far={40}
+        color="#ffffff"
       />
       
       {/* Fill light - increased for more even lighting */}
@@ -59,13 +60,16 @@ function Scene() {
         color="#ffffff"
       />
       
-      {/* Rim light for silhouette */}
+      {/* Enhanced rim light for better silhouette definition */}
       <spotLight
         position={[0, 2, -5]}
-        intensity={0.8}
-        angle={0.6}
-        penumbra={0.8}
-        color="#f5f5f5"
+        intensity={1.2}
+        angle={0.5}
+        penumbra={0.6}
+        color="#ffffff"
+        castShadow
+        shadow-bias={-0.0001}
+        shadow-mapSize={[1024, 1024]}
       />
       
       {/* Top-down light for natural feel */}
