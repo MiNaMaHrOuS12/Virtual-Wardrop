@@ -195,14 +195,13 @@ export default function MannequinModel() {
   const { gender, scaleFactors } = useMannequin();
   const mannequinRef = useRef<THREE.Group>(null);
   
-  // Create a more efficient rotation with useFrame
-  // This avoids constant re-renders on measurement changes
-  useFrame(({ clock }) => {
+  // No automatic rotation - mannequin remains static until interacted with
+  useEffect(() => {
     if (mannequinRef.current) {
-      // Continuous slow rotation for better visibility
-      mannequinRef.current.rotation.y = clock.getElapsedTime() * 0.15;
+      // Set a fixed initial rotation for best visibility
+      mannequinRef.current.rotation.y = Math.PI * 0.1;
     }
-  });
+  }, []);
   
   // Only log significant scale factor changes to reduce noise
   useEffect(() => {

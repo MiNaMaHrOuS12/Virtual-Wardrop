@@ -95,8 +95,6 @@ function Scene() {
         maxDistance={4}
         target={[0, 0.7, 0]} // Centered on mannequin's middle
         makeDefault
-        enableDamping={true}
-        dampingFactor={0.05}
       />
       
       {/* Premium environment lighting */}
@@ -152,9 +150,19 @@ export default function ThreeDScene() {
       document.removeEventListener('touchstart', handleInteraction);
     };
     
-    // Add listeners for user interaction
+    // Prevent page scrolling when mouse is over canvas
+    const handleWheel = (e: WheelEvent) => {
+      // Only prevent default if pointer is over the canvas
+      if (e.target instanceof HTMLElement && 
+          (e.target.tagName === 'CANVAS' || e.target.closest('.canvas-container'))) {
+        e.preventDefault();
+      }
+    };
+    
+    // Add event listeners
     document.addEventListener('click', handleInteraction);
     document.addEventListener('touchstart', handleInteraction);
+    document.addEventListener('wheel', handleWheel, { passive: false });
     
     setIsReady(true);
     
@@ -165,6 +173,7 @@ export default function ThreeDScene() {
       successSound.pause();
       document.removeEventListener('click', handleInteraction);
       document.removeEventListener('touchstart', handleInteraction);
+      document.removeEventListener('wheel', handleWheel);
     };
   }, [setBackgroundMusic, setHitSound, setSuccessSound, playBackgroundMusic]);
   
@@ -179,7 +188,7 @@ export default function ThreeDScene() {
   return (
     <div 
       ref={drop} 
-      className={`relative w-full h-full rounded-lg overflow-hidden canvas-container flex items-center justify-center ${
+      className={`relative w-full h-full rounded-lg overflow-hidden canvas-container ${
         isOver ? "border-2 border-blue-500" : ""
       }`}
       style={{ height: "100%" }}
@@ -190,7 +199,11 @@ export default function ThreeDScene() {
         style={{ 
           background: "transparent", 
           height: "100%", 
-          width: "100%"
+          width: "100%",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)"
         }}
         gl={{ 
           antialias: true,
