@@ -18,8 +18,8 @@ const MaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
   const model = useMannequin3DModel(scene, scaleFactors);
   
   return (
-    <group position={[0, -1, 0]}>
-      <primitive object={model} scale={0.8} />
+    <group position={[0, -0.6, 0]}>
+      <primitive object={model} scale={1.5} />
     </group>
   );
 };
@@ -32,8 +32,8 @@ const FemaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
   const model = useMannequin3DModel(scene, scaleFactors);
   
   return (
-    <group position={[0, -1, 0]}>
-      <primitive object={model} scale={0.8} />
+    <group position={[0, -0.6, 0]}>
+      <primitive object={model} scale={1.5} />
     </group>
   );
 };

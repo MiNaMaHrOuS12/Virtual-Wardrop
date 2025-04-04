@@ -1,20 +1,46 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Settings, Home, Menu } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useBrandSettings } from "@/lib/stores/useBrandSettings";
 import { cn } from "@/lib/utils";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { settings } = useBrandSettings();
+  
+  // Add scroll event listener to change header appearance when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      if (offset > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   
   return (
     <header 
-      className="fixed top-0 left-0 w-full z-50 p-4 bg-white dark:bg-gray-900 shadow-md"
+      className={cn(
+        "fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out",
+        scrolled 
+          ? "py-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md" 
+          : "p-4 bg-white dark:bg-gray-900 shadow-md"
+      )}
       style={{
-        backgroundColor: settings.primaryColor + '10', // 10% opacity
-        borderBottom: `1px solid ${settings.primaryColor}40` // 40% opacity
+        backgroundColor: scrolled 
+          ? `${settings.primaryColor}20` // 20% opacity when scrolled
+          : `${settings.primaryColor}10`, // 10% opacity when at top
+        borderBottom: `1px solid ${settings.primaryColor}${scrolled ? '50' : '40'}` // More opacity when scrolled
       }}
     >
       <div className="container mx-auto flex justify-between items-center">

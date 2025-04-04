@@ -18,55 +18,74 @@ function Loader() {
 }
 
 function Scene() {
-  // Lighting setup
+  // Enhanced lighting setup
   return (
     <>
-      {/* Environment and lighting */}
-      <ambientLight intensity={0.8} />
+      {/* Enhanced environment and lighting */}
+      <ambientLight intensity={1.2} />
       <directionalLight 
-        position={[5, 5, 5]} 
-        intensity={1.3} 
+        position={[5, 8, 5]} 
+        intensity={1.8} 
         castShadow 
-        shadow-mapSize={[2048, 2048]}
+        shadow-mapSize={[4096, 4096]}
+        shadow-bias={-0.0005}
       />
       <directionalLight 
         position={[-5, 5, -5]} 
-        intensity={0.7} 
+        intensity={1} 
+        color="#f0f9ff"
       />
       <spotLight
-        position={[0, 10, 0]}
-        intensity={0.9}
-        angle={0.4}
-        penumbra={0.3}
+        position={[0, 15, 0]}
+        intensity={1.2}
+        angle={0.5}
+        penumbra={0.5}
         castShadow
+        shadow-mapSize={[2048, 2048]}
       />
       
-      {/* Floor - a single unified platform with a subtle gradient */}
+      {/* Rim light for better definition */}
+      <pointLight 
+        position={[0, 1, -4]} 
+        intensity={0.5} 
+        color="#e0f7fa"
+      />
+      
+      {/* Larger floor with more premium look */}
       <mesh position={[0, -1.0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[2.5, 64]} />
+        <circleGeometry args={[4, 128]} />
         <meshStandardMaterial 
-          color="#f8f9fa" 
-          roughness={0.3}
-          metalness={0.1}
+          color="#f8fafc" 
+          roughness={0.15}
+          metalness={0.3}
+          envMapIntensity={1.2}
         />
+      </mesh>
+      
+      {/* Subtle shadow catcher */}
+      <mesh position={[0, -0.99, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[2.8, 64]} />
+        <shadowMaterial opacity={0.3} transparent />
       </mesh>
       
       {/* Mannequin */}
       <MannequinModel />
       
-      {/* Orbit controls for user interaction */}
+      {/* Enhanced orbit controls for better user experience */}
       <OrbitControls 
         enablePan={false}
-        minPolarAngle={Math.PI / 6}
-        maxPolarAngle={Math.PI / 2.2}
-        minDistance={1.5}
-        maxDistance={4}
-        target={[0, 0.5, 0]}
+        minPolarAngle={Math.PI / 7}
+        maxPolarAngle={Math.PI / 2.5}
+        minDistance={1.2}
+        maxDistance={5}
+        target={[0, 0.4, 0]}
         makeDefault
+        enableDamping={true}
+        dampingFactor={0.05}
       />
       
-      {/* Environment lighting */}
-      <Environment preset="sunset" />
+      {/* Premium environment lighting */}
+      <Environment preset="studio" />
     </>
   );
 }
@@ -127,8 +146,12 @@ export default function ThreeDScene() {
     >
       <Canvas
         shadows
-        camera={{ position: [0, 0.5, 3.5], fov: 45 }}
-        style={{ background: "linear-gradient(to bottom, #e0f2fe, #ffffff)" }}
+        camera={{ position: [0, 0.75, 2.8], fov: 40 }}
+        style={{ 
+          background: "linear-gradient(to bottom, #e0f2fe, #ffffff)",
+          height: "80vh",  // Make the canvas taller
+          minHeight: "500px" // Set minimum height
+        }}
         gl={{ 
           antialias: true,
           alpha: true,
