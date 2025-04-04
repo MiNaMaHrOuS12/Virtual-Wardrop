@@ -22,8 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { useBrandSettings } from "@/lib/stores/useBrandSettings";
+import { Checkbox } from "@/components/ui/checkbox";
+
 
 // Define the form schema with validation
 const bookingSchema = z.object({
@@ -52,6 +54,7 @@ const bookingSchema = z.object({
   preferredTime: z.string({
     required_error: "Please select your preferred time.",
   }),
+  services: z.array(z.string()).optional(),
 });
 
 type BookingFormValues = z.infer<typeof bookingSchema>;
@@ -60,6 +63,34 @@ export default function BookingPage() {
   const [submitted, setSubmitted] = useState(false);
   const { settings } = useBrandSettings();
   
+  // Available services
+  const services = [
+    {
+      id: "virtual-try-on",
+      label: "3D Virtual Try-On Integration"
+    },
+    {
+      id: "custom-mannequin",
+      label: "Custom Mannequin Development"
+    },
+    {
+      id: "ecommerce-integration",
+      label: "E-commerce Platform Integration"
+    },
+    {
+      id: "white-label-solution",
+      label: "White-Label Solution"
+    },
+    {
+      id: "analytics-dashboard",
+      label: "Custom Analytics Dashboard"
+    },
+    {
+      id: "api-access",
+      label: "API Access & Development"
+    },
+  ];
+
   // Default form values
   const defaultValues: Partial<BookingFormValues> = {
     companyName: "",
@@ -70,6 +101,7 @@ export default function BookingPage() {
     message: "",
     timeZone: "UTC",
     preferredTime: "10:00",
+    services: [],
   };
 
   const form = useForm<BookingFormValues>({
@@ -77,13 +109,36 @@ export default function BookingPage() {
     defaultValues,
   });
 
-  function onSubmit(data: BookingFormValues) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function onSubmit(data: BookingFormValues) {
     console.log("Booking request submitted:", data);
-    // In a real app, you would send this data to a backend API
-    // For now, we'll just simulate success after a short delay
-    setTimeout(() => {
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Send data to our API endpoint
+      const response = await fetch('/api/booking', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      console.log('Booking response:', result);
       setSubmitted(true);
-    }, 1000);
+    } catch (error) {
+      console.error('Error submitting booking:', error);
+      // You could set an error state and display it to the user
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   // Generate time slots for the select dropdown
@@ -236,6 +291,54 @@ export default function BookingPage() {
               />
             </div>
 
+            <div>
+              <FormLabel className="text-base font-medium mb-3 block">Services You're Interested In</FormLabel>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                <FormField
+                  control={form.control}
+                  name="services"
+                  render={() => (
+                    <FormItem>
+                      {services.map((service, index) => (
+                        <FormField
+                          key={service.id}
+                          control={form.control}
+                          name="services"
+                          render={({ field }) => {
+                            return (
+                              <FormItem
+                                key={service.id}
+                                className="flex flex-row items-start space-x-3 space-y-0 mb-2"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(service.label)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value || [], service.label])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value) => value !== service.label
+                                            )
+                                          );
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal cursor-pointer text-sm mt-0.5">
+                                  {index + 1}. {service.label}
+                                </FormLabel>
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      ))}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -311,8 +414,20 @@ export default function BookingPage() {
             </div>
 
             <div className="pt-4">
-              <Button type="submit" className="w-full" style={{ backgroundColor: settings.primaryColor }}>
-                Request Meeting
+              <Button 
+                type="submit" 
+                className="w-full" 
+                style={{ backgroundColor: settings.primaryColor }}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  "Request Meeting"
+                )}
               </Button>
             </div>
           </form>
