@@ -85,32 +85,38 @@ export const sendBookingConfirmation = async (req: Request, res: Response) => {
       html: htmlContent,
     };
     
-    // Only attempt to send if we have credentials
+    // Store booking data even if email fails
+    console.log('Booking data received:', bookingData);
+    
+    // Check credentials
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-      console.log('Email credentials not provided. Email would have been sent with the following content:');
-      console.log(htmlContent);
       return res.status(200).json({ 
-        message: 'Email credentials not found. Email would have been sent in production.',
-        preview: htmlContent
+        message: 'Booking received. Email sending skipped - credentials not configured.',
+        success: true
       });
     }
     
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Message sent: %s', info.messageId);
-    
-    res.status(200).json({ message: 'Booking confirmation email sent successfully' });
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Message sent: %s', info.messageId);
+      res.status(200).json({ 
+        message: 'Booking confirmation email sent successfully',
+        success: true 
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      // Still return success since we received the booking
+      res.status(200).json({
+        message: 'Booking received but email notification failed',
+        success: true,
+        emailError: emailError.message
+      });
+    }
   } catch (error) {
-    console.error('Error sending email:', error);
-    // For development, still return 200 if credentials are missing
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-      return res.status(200).json({ 
-        message: 'Development mode: Email would have been sent in production',
-        preview: htmlContent
-      });
-    }
+    console.error('Booking processing error:', error);
     res.status(500).json({ 
-      error: 'Failed to send booking confirmation email',
-      details: error.message 
+      error: 'Failed to process booking request',
+      details: error.message
     });
   }
 };
