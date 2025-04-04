@@ -5,6 +5,9 @@ import MannequinModel from "./MannequinModel";
 import { useClothing } from "@/lib/stores/useClothing";
 import { useDrop } from "react-dnd";
 import { useAudio } from "@/lib/stores/useAudio";
+import * as THREE from "three";
+import { Volume2, VolumeX, Play, Pause } from "lucide-react";
+import { Button } from "./ui/button";
 
 function Loader() {
   const { progress } = useProgress();
@@ -18,54 +21,70 @@ function Loader() {
 }
 
 function Scene() {
-  // Enhanced lighting setup
+  // Enhanced lighting setup with photographic three-point lighting
   return (
     <>
       {/* Enhanced environment and lighting */}
-      <ambientLight intensity={1.2} />
+      <color attach="background" args={["#f8fafc"]} />
+      
+      {/* Ambient light - fill light */}
+      <ambientLight intensity={0.8} />
+      
+      {/* Key light - main directional light */}
       <directionalLight 
-        position={[5, 8, 5]} 
-        intensity={1.8} 
+        position={[4, 6, 4]} 
+        intensity={2.0} 
         castShadow 
-        shadow-mapSize={[4096, 4096]}
-        shadow-bias={-0.0005}
-      />
-      <directionalLight 
-        position={[-5, 5, -5]} 
-        intensity={1} 
-        color="#f0f9ff"
-      />
-      <spotLight
-        position={[0, 15, 0]}
-        intensity={1.2}
-        angle={0.5}
-        penumbra={0.5}
-        castShadow
         shadow-mapSize={[2048, 2048]}
+        shadow-bias={-0.0001}
+        shadow-camera-left={-5}
+        shadow-camera-right={5}
+        shadow-camera-top={5}
+        shadow-camera-bottom={-5}
+        shadow-camera-near={0.1}
+        shadow-camera-far={40}
       />
       
-      {/* Rim light for better definition */}
+      {/* Fill light */}
+      <directionalLight 
+        position={[-4, 4, -2]} 
+        intensity={1.2} 
+        color="#e6f7ff"
+      />
+      
+      {/* Rim light for silhouette */}
+      <spotLight
+        position={[0, 2, -5]}
+        intensity={0.8}
+        angle={0.6}
+        penumbra={0.8}
+        color="#f5f5f5"
+      />
+      
+      {/* Top-down light for natural feel */}
       <pointLight 
-        position={[0, 1, -4]} 
-        intensity={0.5} 
-        color="#e0f7fa"
+        position={[0, 8, 0]} 
+        intensity={0.6} 
+        color="#ffffff"
+        distance={10}
+        decay={2}
       />
       
-      {/* Larger floor with more premium look */}
-      <mesh position={[0, -1.0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[4, 128]} />
+      {/* Elegant floor with gradient */}
+      <mesh position={[0, -0.65, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[6, 128]} />
         <meshStandardMaterial 
           color="#f8fafc" 
-          roughness={0.15}
-          metalness={0.3}
-          envMapIntensity={1.2}
+          roughness={0.1}
+          metalness={0.1}
+          envMapIntensity={0.8}
         />
       </mesh>
       
       {/* Subtle shadow catcher */}
-      <mesh position={[0, -0.99, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[2.8, 64]} />
-        <shadowMaterial opacity={0.3} transparent />
+      <mesh position={[0, -0.64, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[4, 64]} />
+        <shadowMaterial opacity={0.2} transparent />
       </mesh>
       
       {/* Mannequin */}
@@ -93,7 +112,16 @@ function Scene() {
 export default function ThreeDScene() {
   const [isReady, setIsReady] = useState(false);
   const { selectedItems } = useClothing();
-  const { setBackgroundMusic, setHitSound, setSuccessSound } = useAudio();
+  const { 
+    setBackgroundMusic, 
+    setHitSound, 
+    setSuccessSound,
+    playBackgroundMusic,
+    toggleMute,
+    isMuted,
+    isPlaying,
+    togglePlay
+  } = useAudio();
   
   // Setup drop target for clothing items
   const [{ isOver }, drop] = useDrop(() => ({
@@ -120,14 +148,29 @@ export default function ThreeDScene() {
     setHitSound(hitSound);
     setSuccessSound(successSound);
     
+    // Auto play background music on user interaction
+    const handleInteraction = () => {
+      playBackgroundMusic();
+      // Remove listeners after first interaction
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+    
+    // Add listeners for user interaction
+    document.addEventListener('click', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction);
+    
     setIsReady(true);
     
     return () => {
+      // Clean up audio and event listeners
       backgroundMusic.pause();
       hitSound.pause();
       successSound.pause();
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
     };
-  }, [setBackgroundMusic, setHitSound, setSuccessSound]);
+  }, [setBackgroundMusic, setHitSound, setSuccessSound, playBackgroundMusic]);
   
   if (!isReady) {
     return (
@@ -140,17 +183,17 @@ export default function ThreeDScene() {
   return (
     <div 
       ref={drop} 
-      className={`relative w-full h-full rounded-lg overflow-hidden ${
+      className={`relative w-full h-full rounded-lg overflow-hidden canvas-container ${
         isOver ? "border-2 border-blue-500" : ""
       }`}
     >
       <Canvas
         shadows
-        camera={{ position: [0, 0.75, 2.8], fov: 40 }}
+        camera={{ position: [0, 0.6, 2.5], fov: 35 }}
         style={{ 
-          background: "linear-gradient(to bottom, #e0f2fe, #ffffff)",
-          height: "80vh",  // Make the canvas taller
-          minHeight: "500px" // Set minimum height
+          background: "transparent", 
+          height: "100%",  // Use 100% to work with our container
+          width: "100%"
         }}
         gl={{ 
           antialias: true,
@@ -160,7 +203,7 @@ export default function ThreeDScene() {
         }}
         frameloop="demand"
         performance={{ min: 0.5 }}
-        dpr={[1, 1.5]}
+        dpr={[1, 2]} // Increase DPR for better quality
       >
         <Suspense fallback={<Loader />}>
           <Scene />
@@ -184,6 +227,29 @@ export default function ThreeDScene() {
           </div>
         </div>
       )}
+      
+      {/* Audio controls */}
+      <div className="absolute bottom-4 right-4 flex gap-2">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="bg-white bg-opacity-80 rounded-full h-10 w-10 shadow-md backdrop-blur-sm"
+          onClick={toggleMute}
+          title={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          size="icon" 
+          className="bg-white bg-opacity-80 rounded-full h-10 w-10 shadow-md backdrop-blur-sm"
+          onClick={togglePlay}
+          title={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+        </Button>
+      </div>
     </div>
   );
 }

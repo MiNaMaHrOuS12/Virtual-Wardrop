@@ -60,3 +60,55 @@ canvas {
   height: 100% !important;
   touch-action: none;
 }
+
+/* Canvas container default styling */
+.canvas-container {
+  height: 85vh !important;
+  min-height: 550px !important;
+  position: relative !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: 2rem !important;
+}
+
+/* Custom Responsive Styles */
+@media (max-width: 768px) {
+  /* Medium screens */
+  .canvas-container {
+    height: 75vh !important;
+    min-height: 450px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Small screens */
+  .canvas-container {
+    height: 70vh !important;
+    min-height: 400px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens */
+  .canvas-container {
+    height: 60vh !important;
+    min-height: 350px !important;
+  }
+}
+
+/* Smooth scrolling and better touch behavior */
+html {
+  scroll-behavior: smooth;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Better form controls on mobile */
+input, select, textarea, button {
+  font-size: 16px !important; /* Prevents zoom on focus in iOS */
+}
+
+/* High-contrast focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}

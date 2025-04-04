@@ -5,6 +5,7 @@ interface AudioState {
   hitSound: HTMLAudioElement | null;
   successSound: HTMLAudioElement | null;
   isMuted: boolean;
+  isPlaying: boolean;
   
   // Setter functions
   setBackgroundMusic: (music: HTMLAudioElement) => void;
@@ -13,6 +14,9 @@ interface AudioState {
   
   // Control functions
   toggleMute: () => void;
+  togglePlay: () => void;
+  playBackgroundMusic: () => void;
+  pauseBackgroundMusic: () => void;
   playHit: () => void;
   playSuccess: () => void;
 }
@@ -22,20 +26,59 @@ export const useAudio = create<AudioState>((set, get) => ({
   hitSound: null,
   successSound: null,
   isMuted: true, // Start muted by default
+  isPlaying: false,
   
   setBackgroundMusic: (music) => set({ backgroundMusic: music }),
   setHitSound: (sound) => set({ hitSound: sound }),
   setSuccessSound: (sound) => set({ successSound: sound }),
   
   toggleMute: () => {
-    const { isMuted } = get();
+    const { isMuted, backgroundMusic } = get();
     const newMutedState = !isMuted;
     
-    // Just update the muted state
+    // Update the muted state
     set({ isMuted: newMutedState });
+    
+    // Update audio elements
+    if (backgroundMusic) {
+      backgroundMusic.muted = newMutedState;
+    }
     
     // Log the change
     console.log(`Sound ${newMutedState ? 'muted' : 'unmuted'}`);
+  },
+  
+  togglePlay: () => {
+    const { isPlaying, playBackgroundMusic, pauseBackgroundMusic } = get();
+    if (isPlaying) {
+      pauseBackgroundMusic();
+    } else {
+      playBackgroundMusic();
+    }
+  },
+  
+  playBackgroundMusic: () => {
+    const { backgroundMusic, isMuted } = get();
+    if (backgroundMusic) {
+      backgroundMusic.muted = isMuted;
+      backgroundMusic.play()
+        .then(() => {
+          set({ isPlaying: true });
+          console.log("Background music started");
+        })
+        .catch(error => {
+          console.log("Background music play prevented:", error);
+        });
+    }
+  },
+  
+  pauseBackgroundMusic: () => {
+    const { backgroundMusic } = get();
+    if (backgroundMusic) {
+      backgroundMusic.pause();
+      set({ isPlaying: false });
+      console.log("Background music paused");
+    }
   },
   
   playHit: () => {

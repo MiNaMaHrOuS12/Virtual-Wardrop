@@ -5,6 +5,23 @@ import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
 import { ScaleFactors } from "@/types";
 
+// Helper function to get node hierarchy for debugging
+function getNodeNameHierarchy(node: THREE.Object3D, depth = 0, maxDepth = 3): string {
+  if (depth > maxDepth) return '';
+  
+  let result = ' '.repeat(depth * 2) + node.name;
+  if ((node as THREE.Mesh).isMesh) {
+    result += ' [MESH]';
+  }
+  result += '\n';
+  
+  for (const child of node.children) {
+    result += getNodeNameHierarchy(child, depth + 1, maxDepth);
+  }
+  
+  return result;
+}
+
 interface MannequinProps {
   scaleFactors: ScaleFactors;
 }
@@ -18,8 +35,8 @@ const MaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
   const model = useMannequin3DModel(scene, scaleFactors);
   
   return (
-    <group position={[0, -0.6, 0]}>
-      <primitive object={model} scale={1.5} />
+    <group position={[0, -0.3, 0]}>
+      <primitive object={model} scale={1.2} castShadow receiveShadow />
     </group>
   );
 };
@@ -32,8 +49,8 @@ const FemaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
   const model = useMannequin3DModel(scene, scaleFactors);
   
   return (
-    <group position={[0, -0.6, 0]}>
-      <primitive object={model} scale={1.5} />
+    <group position={[0, -0.3, 0]}>
+      <primitive object={model} scale={1.2} castShadow receiveShadow />
     </group>
   );
 };
@@ -55,33 +72,55 @@ function useMannequin3DModel(originalScene: THREE.Object3D, scaleFactors: ScaleF
     modelRef.current = clonedScene;
     
     // Apply scaling to specific parts of the model
+    // Debug: Log all node names to identify body parts
+    console.log("Model hierarchy:", getNodeNameHierarchy(clonedScene));
+    
+    // Apply material and scaling to the entire model
     clonedScene.traverse((node: THREE.Object3D) => {
       if ((node as THREE.Mesh).isMesh) {
         const meshNode = node as THREE.Mesh;
         // Apply material settings for all meshes
         if (meshNode.material) {
           const material = meshNode.material as THREE.MeshStandardMaterial;
-          meshNode.material = material.clone();
-          material.color = new THREE.Color("#f0f0f0");
-          material.roughness = 0.4;
-          material.metalness = 0.1;
+          const newMaterial = material.clone();
+          meshNode.material = newMaterial;
+          newMaterial.color = new THREE.Color("#f5f5f7");
+          newMaterial.roughness = 0.3;
+          newMaterial.metalness = 0.05;
+          newMaterial.envMapIntensity = 0.8;
+          
+          // Enable shadows for all meshes
+          meshNode.castShadow = true;
+          meshNode.receiveShadow = true;
         }
         
-        // Apply scale to specific body parts based on node name
-        // Note: These are example node names - actual names depend on the model structure
+        // Apply scale based on node name and position
         const name = node.name.toLowerCase();
         
-        if (name.includes('torso') || name.includes('chest')) {
+        // Safer approach with more specific matching and position-based scaling
+        // Chest/Torso area
+        if (name.includes('chest') || name.includes('torso') || name.includes('upper') || 
+            (node.position.y > 0.5 && node.position.y < 1.2)) {
           node.scale.x *= chest;
           node.scale.z *= chest;
-        } else if (name.includes('waist')) {
+        } 
+        // Waist area
+        else if (name.includes('waist') || name.includes('abdomen') || name.includes('stomach') || 
+                (node.position.y > 0 && node.position.y < 0.5)) {
           node.scale.x *= waist;
           node.scale.z *= waist;
-        } else if (name.includes('hip')) {
+        } 
+        // Hip area
+        else if (name.includes('hip') || name.includes('pelvis') || name.includes('thigh') || 
+                (node.position.y > -0.3 && node.position.y < 0)) {
           node.scale.x *= hips;
           node.scale.z *= hips;
-        } else if (name.includes('shoulder')) {
+        }
+        // Shoulders
+        else if (name.includes('shoulder') || name.includes('clavicle') || 
+                (Math.abs(node.position.x) > 0.2 && node.position.y > 0.8)) {
           node.scale.x *= shoulders;
+          node.scale.z *= shoulders * 0.5;
         }
       }
     });
