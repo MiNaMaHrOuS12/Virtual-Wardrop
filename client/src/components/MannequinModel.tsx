@@ -31,8 +31,68 @@ const MaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
   // Load the 3D model
   const { scene } = useGLTF("/models/male_mannequin.glb");
   
-  // Create a clone of the scene to avoid modifying the cached original
-  const model = useMannequin3DModel(scene, scaleFactors);
+  // Clone the scene to avoid modifying the original
+  const model = useMemo(() => {
+    const clonedScene = scene.clone(true);
+    
+    // Set white material for better visibility
+    clonedScene.traverse((node: THREE.Object3D) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const meshNode = node as THREE.Mesh;
+        if (meshNode.material) {
+          const material = meshNode.material as THREE.MeshStandardMaterial;
+          const newMaterial = material.clone();
+          meshNode.material = newMaterial;
+          newMaterial.color = new THREE.Color("#ffffff");
+          newMaterial.roughness = 0.2;
+          newMaterial.metalness = 0.1;
+          newMaterial.envMapIntensity = 1.2;
+          
+          meshNode.castShadow = true;
+          meshNode.receiveShadow = true;
+        }
+      }
+    });
+    
+    return clonedScene;
+  }, [scene]);
+  
+  // Scale adjustments
+  const { chest, waist, hips, height, shoulders } = scaleFactors;
+  
+  useEffect(() => {
+    console.log("Updated male model with scales:", scaleFactors);
+    
+    model.traverse((node: THREE.Object3D) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const meshNode = node as THREE.Mesh;
+        const name = node.name.toLowerCase();
+        const y = node.position.y;
+        
+        // Reset scales to prevent compounding
+        node.scale.set(1, 1, 1);
+        
+        // Apply part-specific scaling
+        if (name.includes('chest') || name.includes('torso') || (y > 0.5 && y < 1.2)) {
+          node.scale.x = chest;
+          node.scale.z = chest;
+        } else if (name.includes('waist') || (y > 0 && y < 0.5)) {
+          node.scale.x = waist;
+          node.scale.z = waist;
+        } else if (name.includes('hip') || (y > -0.3 && y < 0)) {
+          node.scale.x = hips;
+          node.scale.z = hips;
+        } else if (name.includes('shoulder') || (Math.abs(node.position.x) > 0.2 && y > 0.8)) {
+          node.scale.x = shoulders;
+          node.scale.z = shoulders * 0.5;
+        }
+      }
+    });
+    
+    // Apply height scaling to entire model
+    model.scale.y = height;
+    
+  }, [model, chest, waist, hips, height, shoulders]);
   
   return (
     <group position={[0, 0, 0]}>
@@ -45,8 +105,68 @@ const FemaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
   // Load the 3D model
   const { scene } = useGLTF("/models/female_mannequin.glb");
   
-  // Create a clone of the scene to avoid modifying the cached original
-  const model = useMannequin3DModel(scene, scaleFactors);
+  // Clone the scene to avoid modifying the original
+  const model = useMemo(() => {
+    const clonedScene = scene.clone(true);
+    
+    // Set white material for better visibility
+    clonedScene.traverse((node: THREE.Object3D) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const meshNode = node as THREE.Mesh;
+        if (meshNode.material) {
+          const material = meshNode.material as THREE.MeshStandardMaterial;
+          const newMaterial = material.clone();
+          meshNode.material = newMaterial;
+          newMaterial.color = new THREE.Color("#ffffff");
+          newMaterial.roughness = 0.2;
+          newMaterial.metalness = 0.1;
+          newMaterial.envMapIntensity = 1.2;
+          
+          meshNode.castShadow = true;
+          meshNode.receiveShadow = true;
+        }
+      }
+    });
+    
+    return clonedScene;
+  }, [scene]);
+  
+  // Scale adjustments
+  const { chest, waist, hips, height, shoulders } = scaleFactors;
+  
+  useEffect(() => {
+    console.log("Updated female model with scales:", scaleFactors);
+    
+    model.traverse((node: THREE.Object3D) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const meshNode = node as THREE.Mesh;
+        const name = node.name.toLowerCase();
+        const y = node.position.y;
+        
+        // Reset scales to prevent compounding
+        node.scale.set(1, 1, 1);
+        
+        // Apply part-specific scaling
+        if (name.includes('chest') || name.includes('torso') || (y > 0.5 && y < 1.2)) {
+          node.scale.x = chest;
+          node.scale.z = chest;
+        } else if (name.includes('waist') || (y > 0 && y < 0.5)) {
+          node.scale.x = waist;
+          node.scale.z = waist;
+        } else if (name.includes('hip') || (y > -0.3 && y < 0)) {
+          node.scale.x = hips;
+          node.scale.z = hips;
+        } else if (name.includes('shoulder') || (Math.abs(node.position.x) > 0.2 && y > 0.8)) {
+          node.scale.x = shoulders;
+          node.scale.z = shoulders * 0.5;
+        }
+      }
+    });
+    
+    // Apply height scaling to entire model
+    model.scale.y = height;
+    
+  }, [model, chest, waist, hips, height, shoulders]);
   
   return (
     <group position={[0, 0, 0]}>
