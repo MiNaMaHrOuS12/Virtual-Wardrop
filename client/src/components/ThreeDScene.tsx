@@ -71,7 +71,7 @@ function Scene() {
       />
       
       {/* Elegant floor with gradient */}
-      <mesh position={[0, -0.65, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh position={[0, -1.0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <circleGeometry args={[6, 128]} />
         <meshStandardMaterial 
           color="#f8fafc" 
@@ -82,7 +82,7 @@ function Scene() {
       </mesh>
       
       {/* Subtle shadow catcher */}
-      <mesh position={[0, -0.64, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh position={[0, -0.99, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <circleGeometry args={[4, 64]} />
         <shadowMaterial opacity={0.2} transparent />
       </mesh>
@@ -97,7 +97,7 @@ function Scene() {
         maxPolarAngle={Math.PI / 2.5}
         minDistance={1.2}
         maxDistance={5}
-        target={[0, 0.4, 0]}
+        target={[0, 0.0, 0]}
         makeDefault
         enableDamping={true}
         dampingFactor={0.05}
@@ -189,7 +189,7 @@ export default function ThreeDScene() {
     >
       <Canvas
         shadows
-        camera={{ position: [0, 0.6, 2.5], fov: 35 }}
+        camera={{ position: [0, 0, 3.0], fov: 30 }}
         style={{ 
           background: "transparent", 
           height: "100%",  // Use 100% to work with our container
