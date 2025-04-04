@@ -2,220 +2,112 @@ import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useMannequin } from "@/lib/stores/useMannequin";
 import * as THREE from "three";
-import { useTexture } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
+import { ScaleFactors } from "@/types";
 
-// Male and female mannequin components
-const MaleMannequin = ({ scaleFactors }) => {
-  // Create a simple mannequin using primitive shapes
-  // These would be replaced with actual 3D models in a production environment
+interface MannequinProps {
+  scaleFactors: ScaleFactors;
+}
+
+// Male and female mannequin components using 3D models
+const MaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
+  // Load the 3D model
+  const { scene } = useGLTF("/models/male_mannequin.glb");
   
-  // Apply scale factors from measurements
-  const {
-    height,
-    chest,
-    waist,
-    hips,
-    shoulders,
-    limbs,
-    neck
-  } = scaleFactors;
-  
-  // Load a texture
-  const texture = useTexture("/textures/wood.jpg");
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-  
-  // Scale constants for mannequin parts
-  const torsoHeight = 0.4 * height;
-  const headRadius = 0.08 * height;
-  const armLength = 0.3 * height * limbs;
-  const legLength = 0.45 * height * limbs;
+  // Create a clone of the scene to avoid modifying the cached original
+  const model = useMannequin3DModel(scene, scaleFactors);
   
   return (
     <group position={[0, -1, 0]}>
-      {/* Head */}
-      <mesh position={[0, height * 0.5 - headRadius * 0.5, 0]}>
-        <sphereGeometry args={[headRadius * neck, 32, 32]} />
-        <meshStandardMaterial 
-          color="#e0e0e0" 
-          roughness={0.7} 
-          metalness={0.1} 
-        />
-      </mesh>
-      
-      {/* Torso */}
-      <mesh position={[0, height * 0.25, 0]}>
-        <boxGeometry 
-          args={[
-            shoulders * 0.15 * shoulders, 
-            torsoHeight, 
-            chest * 0.1 * chest
-          ]} 
-        />
-        <meshStandardMaterial 
-          color="#f0f0f0" 
-          roughness={0.6} 
-          metalness={0.1} 
-          map={texture}
-        />
-      </mesh>
-      
-      {/* Waist/Hip area */}
-      <mesh position={[0, height * 0.1 - 0.05, 0]}>
-        <boxGeometry 
-          args={[
-            hips * 0.14 * hips, 
-            0.2 * height, 
-            waist * 0.1 * waist
-          ]} 
-        />
-        <meshStandardMaterial 
-          color="#f0f0f0" 
-          roughness={0.6} 
-          metalness={0.1}
-          map={texture}
-        />
-      </mesh>
-      
-      {/* Left Arm */}
-      <mesh position={[-shoulders * 0.1 * shoulders, height * 0.3, 0]} rotation={[0, 0, -Math.PI * 0.1]}>
-        <cylinderGeometry args={[0.03 * height, 0.02 * height, armLength, 16]} />
-        <meshStandardMaterial color="#e0e0e0" roughness={0.7} metalness={0.1} />
-      </mesh>
-      
-      {/* Right Arm */}
-      <mesh position={[shoulders * 0.1 * shoulders, height * 0.3, 0]} rotation={[0, 0, Math.PI * 0.1]}>
-        <cylinderGeometry args={[0.03 * height, 0.02 * height, armLength, 16]} />
-        <meshStandardMaterial color="#e0e0e0" roughness={0.7} metalness={0.1} />
-      </mesh>
-      
-      {/* Left Leg */}
-      <mesh position={[-hips * 0.05 * hips, -0.15 * height, 0]}>
-        <cylinderGeometry args={[0.04 * height, 0.03 * height, legLength, 16]} />
-        <meshStandardMaterial color="#e0e0e0" roughness={0.7} metalness={0.1} />
-      </mesh>
-      
-      {/* Right Leg */}
-      <mesh position={[hips * 0.05 * hips, -0.15 * height, 0]}>
-        <cylinderGeometry args={[0.04 * height, 0.03 * height, legLength, 16]} />
-        <meshStandardMaterial color="#e0e0e0" roughness={0.7} metalness={0.1} />
-      </mesh>
+      <primitive object={model} scale={0.8} />
     </group>
   );
 };
 
-const FemaleMannequin = ({ scaleFactors }) => {
-  // Similar to male mannequin but with female proportions
-  // Would use proper 3D models in a production environment
+const FemaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
+  // Load the 3D model
+  const { scene } = useGLTF("/models/female_mannequin.glb");
   
-  // Apply scale factors from measurements
-  const {
-    height,
-    chest,
-    waist,
-    hips,
-    shoulders,
-    limbs,
-    neck
-  } = scaleFactors;
-  
-  // Load a texture
-  const texture = useTexture("/textures/wood.jpg");
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-  
-  // Scale constants for mannequin parts
-  const torsoHeight = 0.4 * height;
-  const headRadius = 0.075 * height;
-  const armLength = 0.3 * height * limbs;
-  const legLength = 0.45 * height * limbs;
+  // Create a clone of the scene to avoid modifying the cached original
+  const model = useMannequin3DModel(scene, scaleFactors);
   
   return (
     <group position={[0, -1, 0]}>
-      {/* Head */}
-      <mesh position={[0, height * 0.5 - headRadius * 0.5, 0]}>
-        <sphereGeometry args={[headRadius * neck, 32, 32]} />
-        <meshStandardMaterial 
-          color="#e0e0e0" 
-          roughness={0.7} 
-          metalness={0.1} 
-        />
-      </mesh>
-      
-      {/* Torso - more curved for female */}
-      <mesh position={[0, height * 0.25, 0]}>
-        <boxGeometry 
-          args={[
-            shoulders * 0.13 * shoulders, 
-            torsoHeight, 
-            chest * 0.11 * chest
-          ]} 
-        />
-        <meshStandardMaterial 
-          color="#f0f0f0" 
-          roughness={0.6} 
-          metalness={0.1} 
-          map={texture}
-        />
-      </mesh>
-      
-      {/* Waist area - more defined for female */}
-      <mesh position={[0, height * 0.15, 0]}>
-        <boxGeometry 
-          args={[
-            waist * 0.12 * waist, 
-            0.1 * height, 
-            waist * 0.09 * waist
-          ]} 
-        />
-        <meshStandardMaterial 
-          color="#f5f5f5" 
-          roughness={0.6} 
-          metalness={0.1}
-          map={texture}
-        />
-      </mesh>
-      
-      {/* Hip area - wider for female */}
-      <mesh position={[0, height * 0.05, 0]}>
-        <boxGeometry 
-          args={[
-            hips * 0.15 * hips, 
-            0.15 * height, 
-            hips * 0.11 * hips
-          ]} 
-        />
-        <meshStandardMaterial 
-          color="#f0f0f0" 
-          roughness={0.6} 
-          metalness={0.1}
-          map={texture}
-        />
-      </mesh>
-      
-      {/* Left Arm */}
-      <mesh position={[-shoulders * 0.09 * shoulders, height * 0.3, 0]} rotation={[0, 0, -Math.PI * 0.1]}>
-        <cylinderGeometry args={[0.025 * height, 0.02 * height, armLength, 16]} />
-        <meshStandardMaterial color="#e0e0e0" roughness={0.7} metalness={0.1} />
-      </mesh>
-      
-      {/* Right Arm */}
-      <mesh position={[shoulders * 0.09 * shoulders, height * 0.3, 0]} rotation={[0, 0, Math.PI * 0.1]}>
-        <cylinderGeometry args={[0.025 * height, 0.02 * height, armLength, 16]} />
-        <meshStandardMaterial color="#e0e0e0" roughness={0.7} metalness={0.1} />
-      </mesh>
-      
-      {/* Left Leg */}
-      <mesh position={[-hips * 0.06 * hips, -0.15 * height, 0]}>
-        <cylinderGeometry args={[0.035 * height, 0.025 * height, legLength, 16]} />
-        <meshStandardMaterial color="#e0e0e0" roughness={0.7} metalness={0.1} />
-      </mesh>
-      
-      {/* Right Leg */}
-      <mesh position={[hips * 0.06 * hips, -0.15 * height, 0]}>
-        <cylinderGeometry args={[0.035 * height, 0.025 * height, legLength, 16]} />
-        <meshStandardMaterial color="#e0e0e0" roughness={0.7} metalness={0.1} />
-      </mesh>
+      <primitive object={model} scale={0.8} />
     </group>
   );
+};
+
+// Custom hook to apply scale factors to the mannequin model
+function useMannequin3DModel(originalScene: THREE.Object3D, scaleFactors: ScaleFactors): THREE.Object3D {
+  const modelRef = useRef<THREE.Object3D | null>(null);
+  
+  useEffect(() => {
+    if (!originalScene) return;
+    
+    // Clone the original scene to avoid modifying the cached version
+    const clonedScene = originalScene.clone(true);
+    
+    // Apply scale factors to the model
+    const { height, chest, waist, hips, shoulders } = scaleFactors;
+    
+    // Set the model to the ref
+    modelRef.current = clonedScene;
+    
+    // Apply scaling to specific parts of the model
+    clonedScene.traverse((node: THREE.Object3D) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const meshNode = node as THREE.Mesh;
+        // Apply material settings for all meshes
+        if (meshNode.material) {
+          const material = meshNode.material as THREE.MeshStandardMaterial;
+          meshNode.material = material.clone();
+          material.color = new THREE.Color("#f0f0f0");
+          material.roughness = 0.4;
+          material.metalness = 0.1;
+        }
+        
+        // Apply scale to specific body parts based on node name
+        // Note: These are example node names - actual names depend on the model structure
+        const name = node.name.toLowerCase();
+        
+        if (name.includes('torso') || name.includes('chest')) {
+          node.scale.x *= chest;
+          node.scale.z *= chest;
+        } else if (name.includes('waist')) {
+          node.scale.x *= waist;
+          node.scale.z *= waist;
+        } else if (name.includes('hip')) {
+          node.scale.x *= hips;
+          node.scale.z *= hips;
+        } else if (name.includes('shoulder')) {
+          node.scale.x *= shoulders;
+        }
+      }
+    });
+    
+    // Apply overall height scaling
+    clonedScene.scale.y *= height;
+    
+    return () => {
+      // Clean up
+      if (modelRef.current) {
+        modelRef.current.traverse((node: THREE.Object3D) => {
+          if ((node as THREE.Mesh).isMesh) {
+            const meshNode = node as THREE.Mesh;
+            if (meshNode.material) {
+              (meshNode.material as THREE.Material).dispose();
+            }
+            if (meshNode.geometry) {
+              meshNode.geometry.dispose();
+            }
+          }
+        });
+      }
+    };
+  }, [originalScene, scaleFactors]);
+  
+  return modelRef.current || originalScene.clone();
 };
 
 export default function MannequinModel() {

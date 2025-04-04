@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom scrollbar styles */
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-slate-100 dark:bg-slate-800 rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-500;
+  }
+  
+  /* Hide scrollbar when not needed */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+  }
+  
+  .dark .custom-scrollbar {
+    scrollbar-color: #475569 #1e293b;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -11,7 +40,8 @@
     @apply font-sans antialiased bg-background text-foreground;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     width: 100vw;
     height: 100vh;
   }
@@ -20,7 +50,9 @@
 #root {
   width: 100%;
   height: 100%;
-  position: fixed;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 canvas {

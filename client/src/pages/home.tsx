@@ -21,7 +21,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
       <Header />
       
-      <main className="flex-grow pt-20 px-4 pb-8 lg:pb-12">
+      <main className="flex-grow pt-20 px-4 pb-8 lg:pb-12 overflow-x-hidden">
         <div className="container mx-auto">
           {/* Banner/Intro section */}
           <div className="bg-white dark:bg-slate-900 rounded-lg shadow-md p-6 mb-8 text-center">
@@ -34,8 +34,8 @@ export default function Home() {
           <DndProvider backend={HTML5Backend}>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left column - Measurement inputs */}
-              <div className="order-2 lg:order-1">
-                <h2 className="text-xl font-semibold mb-4 px-2">Your Measurements</h2>
+              <div className="order-2 lg:order-1 lg:max-h-[700px] lg:overflow-y-auto custom-scrollbar">
+                <h2 className="text-xl font-semibold mb-4 px-2 sticky top-0 bg-slate-50 dark:bg-slate-950 py-2 z-10">Your Measurements</h2>
                 <MeasurementInputs />
               </div>
               
@@ -62,8 +62,8 @@ export default function Home() {
               </div>
               
               {/* Right column - Product catalog */}
-              <div className="order-3 lg:order-3">
-                <h2 className="text-xl font-semibold mb-4 px-2">Clothing Collection</h2>
+              <div className="order-3 lg:order-3 lg:max-h-[700px] lg:overflow-y-auto custom-scrollbar">
+                <h2 className="text-xl font-semibold mb-4 px-2 sticky top-0 bg-slate-50 dark:bg-slate-950 py-2 z-10">Clothing Collection</h2>
                 <ProductCatalog />
               </div>
             </div>
