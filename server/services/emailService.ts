@@ -101,6 +101,16 @@ export const sendBookingConfirmation = async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Booking confirmation email sent successfully' });
   } catch (error) {
     console.error('Error sending email:', error);
-    res.status(500).json({ error: 'Failed to send booking confirmation email' });
+    // For development, still return 200 if credentials are missing
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      return res.status(200).json({ 
+        message: 'Development mode: Email would have been sent in production',
+        preview: htmlContent
+      });
+    }
+    res.status(500).json({ 
+      error: 'Failed to send booking confirmation email',
+      details: error.message 
+    });
   }
 };
