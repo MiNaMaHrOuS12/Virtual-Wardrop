@@ -18,43 +18,83 @@ const demoCatalog: ClothingItem[] = [
     id: "shirt-1",
     name: "Classic White Shirt",
     type: "shirt",
-    thumbnailUrl: "/textures/wood.jpg", // Using available texture as placeholder
+    thumbnailUrl: "/textures/wood.jpg",
+    modelUrl: "/models/shirt_white.glb",
     size: "M",
     color: "white",
-    brand: "Fashion Brand",
-    description: "A classic white button-up shirt for any occasion",
+    brand: "Eleganza",
+    description: "A timeless white button-up shirt for any occasion",
+    category: "formal"
+  },
+  {
+    id: "shirt-2",
+    name: "Blue Casual Tee",
+    type: "shirt",
+    thumbnailUrl: "/textures/sky.png",
+    modelUrl: "/models/tshirt_blue.glb",
+    size: "L",
+    color: "blue",
+    brand: "Urban Style",
+    description: "Comfortable lightweight t-shirt for everyday wear",
     category: "casual"
   },
   {
     id: "pants-1",
     name: "Black Slim Pants",
     type: "pants",
-    thumbnailUrl: "/textures/asphalt.png", // Using available texture as placeholder
+    thumbnailUrl: "/textures/asphalt.png",
+    modelUrl: "/models/pants_black.glb",
     size: "32",
     color: "black",
-    brand: "Fashion Brand",
+    brand: "Eleganza",
     description: "Slim fit black pants for a professional look",
     category: "formal"
+  },
+  {
+    id: "pants-2",
+    name: "Blue Denim Jeans",
+    type: "pants",
+    thumbnailUrl: "/textures/sky.png",
+    modelUrl: "/models/jeans_blue.glb",
+    size: "30",
+    color: "blue",
+    brand: "Urban Style",
+    description: "Classic blue jeans with a comfortable fit",
+    category: "casual"
   },
   {
     id: "dress-1",
     name: "Summer Floral Dress",
     type: "dress",
-    thumbnailUrl: "/textures/grass.png", // Using available texture as placeholder
+    thumbnailUrl: "/textures/grass.png",
+    modelUrl: "/models/dress_floral.glb",
     size: "S",
     color: "floral",
-    brand: "Fashion Brand",
+    brand: "Eleganza",
     description: "Light summer dress with floral pattern",
     category: "casual"
   },
   {
     id: "jacket-1",
+    name: "Black Blazer",
+    type: "jacket",
+    thumbnailUrl: "/textures/asphalt.png",
+    modelUrl: "/models/blazer_black.glb",
+    size: "M",
+    color: "black",
+    brand: "Eleganza",
+    description: "Professional blazer for business attire",
+    category: "formal"
+  },
+  {
+    id: "jacket-2",
     name: "Denim Jacket",
     type: "jacket",
-    thumbnailUrl: "/textures/sky.png", // Using available texture as placeholder
+    thumbnailUrl: "/textures/sky.png",
+    modelUrl: "/models/jacket_denim.glb",
     size: "L",
     color: "blue",
-    brand: "Fashion Brand",
+    brand: "Urban Style",
     description: "Classic denim jacket for casual wear",
     category: "casual"
   },
@@ -62,11 +102,36 @@ const demoCatalog: ClothingItem[] = [
     id: "skirt-1",
     name: "A-Line Skirt",
     type: "skirt",
-    thumbnailUrl: "/textures/sand.jpg", // Using available texture as placeholder
+    thumbnailUrl: "/textures/sand.jpg",
+    modelUrl: "/models/skirt_beige.glb",
     size: "M",
     color: "beige",
-    brand: "Fashion Brand",
+    brand: "Eleganza",
     description: "A-line skirt for versatile styling",
+    category: "casual"
+  },
+  {
+    id: "shoes-1",
+    name: "Black Leather Shoes",
+    type: "shoes",
+    thumbnailUrl: "/textures/asphalt.png",
+    modelUrl: "/models/shoes_black.glb",
+    size: "42",
+    color: "black",
+    brand: "Eleganza",
+    description: "Formal leather shoes for professional settings",
+    category: "formal"
+  },
+  {
+    id: "shoes-2",
+    name: "White Sneakers",
+    type: "shoes",
+    thumbnailUrl: "/textures/sand.jpg",
+    modelUrl: "/models/sneakers_white.glb",
+    size: "41",
+    color: "white",
+    brand: "Urban Style",
+    description: "Comfortable casual sneakers",
     category: "casual"
   }
 ];

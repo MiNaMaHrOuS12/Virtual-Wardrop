@@ -61,10 +61,18 @@ const ClothingItem = forwardRef<HTMLDivElement, ClothingItemProps>(
               alt={item.name}
               className="w-full h-full object-cover"
             />
+            <div className="absolute top-0 right-0 bg-white dark:bg-gray-900 text-xs px-2 py-1 rounded-bl-md">
+              {item.size}
+            </div>
           </div>
           <div className="text-sm font-medium truncate">{item.name}</div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">
-            {item.category} · {item.size}
+          <div className="flex justify-between items-center">
+            <div className="text-xs text-slate-500 dark:text-slate-400">
+              {item.brand}
+            </div>
+            <div className="text-xs px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded-full">
+              {item.category}
+            </div>
           </div>
         </CardContent>
       </Card>
