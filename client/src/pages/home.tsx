@@ -32,37 +32,40 @@ export default function Home() {
           </div>
           
           <DndProvider backend={HTML5Backend}>
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Full screen mannequin section */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4 px-2">Your Virtual Mannequin</h2>
+              <div className="h-screen max-h-[80vh]">
+                <ThreeDScene />
+              </div>
+              
+              {/* Audio controls */}
+              <div className="mt-2 flex justify-end">
+                <button
+                  onClick={toggleMute}
+                  className="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors"
+                  aria-label={isMuted ? "Unmute" : "Mute"}
+                  title={isMuted ? "Unmute" : "Mute"}
+                >
+                  {isMuted ? (
+                    <VolumeX size={20} />
+                  ) : (
+                    <Volume2 size={20} />
+                  )}
+                </button>
+              </div>
+            </div>
+            
+            {/* Controls and catalog section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
               {/* Left column - Measurement inputs */}
-              <div className="order-2 lg:order-1 lg:max-h-[700px] lg:overflow-y-auto custom-scrollbar">
+              <div className="lg:max-h-[600px] lg:overflow-y-auto custom-scrollbar">
                 <h2 className="text-xl font-semibold mb-4 px-2 sticky top-0 bg-slate-50 dark:bg-slate-950 py-2 z-10">Your Measurements</h2>
                 <MeasurementInputs />
               </div>
               
-              {/* Middle column - 3D Scene */}
-              <div className="order-1 lg:order-2 h-[500px] lg:h-[700px] lg:col-span-2">
-                <h2 className="text-xl font-semibold mb-4 px-2">Your Virtual Mannequin</h2>
-                <ThreeDScene />
-                
-                {/* Audio controls */}
-                <div className="mt-2 flex justify-end">
-                  <button
-                    onClick={toggleMute}
-                    className="p-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors"
-                    aria-label={isMuted ? "Unmute" : "Mute"}
-                    title={isMuted ? "Unmute" : "Mute"}
-                  >
-                    {isMuted ? (
-                      <VolumeX size={20} />
-                    ) : (
-                      <Volume2 size={20} />
-                    )}
-                  </button>
-                </div>
-              </div>
-              
               {/* Right column - Product catalog */}
-              <div className="order-3 lg:order-3 lg:max-h-[700px] lg:overflow-y-auto custom-scrollbar">
+              <div className="lg:col-span-2 lg:max-h-[600px] lg:overflow-y-auto custom-scrollbar">
                 <h2 className="text-xl font-semibold mb-4 px-2 sticky top-0 bg-slate-50 dark:bg-slate-950 py-2 z-10">Clothing Collection</h2>
                 <ProductCatalog />
               </div>

@@ -171,13 +171,14 @@ export default function ThreeDScene() {
       className={`relative w-full h-full rounded-lg overflow-hidden canvas-container ${
         isOver ? "border-2 border-blue-500" : ""
       }`}
+      style={{ height: "100%" }}
     >
       <Canvas
         shadows
         camera={{ position: [0, 0, 3.0], fov: 30 }}
         style={{ 
           background: "transparent", 
-          height: "100%",  // Use 100% to work with our container
+          height: "100%", 
           width: "100%"
         }}
         gl={{ 
