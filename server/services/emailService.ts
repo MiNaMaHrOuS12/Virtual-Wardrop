@@ -7,12 +7,15 @@ const OWNER_EMAIL = 'minamahrous524@gmail.com';
 // Create a transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // true for 465, false for other ports
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.EMAIL_USER || '',
-    pass: process.env.EMAIL_PASSWORD || '',
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
   },
+  tls: {
+    rejectUnauthorized: true
+  }
 });
 
 interface BookingData {
