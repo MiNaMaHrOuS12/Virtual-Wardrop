@@ -24,16 +24,16 @@ function Scene() {
   // Enhanced lighting setup with photographic three-point lighting
   return (
     <>
-      {/* Enhanced environment and lighting */}
-      <color attach="background" args={["#f8fafc"]} />
+      {/* Enhanced environment and lighting with a distinct background */}
+      <color attach="background" args={["#e0e0e0"]} />
       
-      {/* Ambient light - fill light */}
-      <ambientLight intensity={0.8} />
+      {/* Ambient light - fill light - increased for better visibility */}
+      <ambientLight intensity={1.5} />
       
-      {/* Key light - main directional light */}
+      {/* Key light - main directional light - increased brightness */}
       <directionalLight 
         position={[4, 6, 4]} 
-        intensity={2.0} 
+        intensity={3.0} 
         castShadow 
         shadow-mapSize={[2048, 2048]}
         shadow-bias={-0.0001}
@@ -45,11 +45,18 @@ function Scene() {
         shadow-camera-far={40}
       />
       
-      {/* Fill light */}
+      {/* Fill light - increased for more even lighting */}
       <directionalLight 
         position={[-4, 4, -2]} 
-        intensity={1.2} 
-        color="#e6f7ff"
+        intensity={2.0} 
+        color="#ffffff"
+      />
+      
+      {/* Front light for better visibility */}
+      <directionalLight 
+        position={[0, 2, 8]} 
+        intensity={2.0} 
+        color="#ffffff"
       />
       
       {/* Rim light for silhouette */}
@@ -78,11 +85,11 @@ function Scene() {
       {/* Enhanced orbit controls for better user experience */}
       <OrbitControls 
         enablePan={false}
-        minPolarAngle={Math.PI / 7}
-        maxPolarAngle={Math.PI / 2.5}
-        minDistance={1.2}
-        maxDistance={5}
-        target={[0, 1.0, 0]}
+        minPolarAngle={Math.PI / 10}
+        maxPolarAngle={Math.PI / 2.2}
+        minDistance={1.5}
+        maxDistance={4}
+        target={[0, 0.7, 0]}
         makeDefault
         enableDamping={true}
         dampingFactor={0.05}
@@ -175,7 +182,7 @@ export default function ThreeDScene() {
     >
       <Canvas
         shadows
-        camera={{ position: [0, 1.0, 3.0], fov: 30 }}
+        camera={{ position: [0, 0.8, 2.5], fov: 40 }}
         style={{ 
           background: "transparent", 
           height: "100%", 

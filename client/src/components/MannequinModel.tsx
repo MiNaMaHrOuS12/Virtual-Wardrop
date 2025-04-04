@@ -36,7 +36,7 @@ const MaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
   
   return (
     <group position={[0, 0, 0]}>
-      <primitive object={model} scale={1.2} castShadow receiveShadow />
+      <primitive object={model} scale={1.6} castShadow receiveShadow />
     </group>
   );
 };
@@ -50,7 +50,7 @@ const FemaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
   
   return (
     <group position={[0, 0, 0]}>
-      <primitive object={model} scale={1.2} castShadow receiveShadow />
+      <primitive object={model} scale={1.6} castShadow receiveShadow />
     </group>
   );
 };
@@ -84,10 +84,10 @@ function useMannequin3DModel(originalScene: THREE.Object3D, scaleFactors: ScaleF
           const material = meshNode.material as THREE.MeshStandardMaterial;
           const newMaterial = material.clone();
           meshNode.material = newMaterial;
-          newMaterial.color = new THREE.Color("#f5f5f7");
-          newMaterial.roughness = 0.3;
-          newMaterial.metalness = 0.05;
-          newMaterial.envMapIntensity = 0.8;
+          newMaterial.color = new THREE.Color("#ffffff");
+          newMaterial.roughness = 0.2;
+          newMaterial.metalness = 0.1;
+          newMaterial.envMapIntensity = 1.2;
           
           // Enable shadows for all meshes
           meshNode.castShadow = true;
@@ -157,8 +157,8 @@ export default function MannequinModel() {
   // This avoids constant re-renders on measurement changes
   useFrame(({ clock }) => {
     if (mannequinRef.current) {
-      // Very slow rotation for display purposes
-      mannequinRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.08) * 0.3;
+      // Continuous slow rotation for better visibility
+      mannequinRef.current.rotation.y = clock.getElapsedTime() * 0.15;
     }
   });
   
