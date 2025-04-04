@@ -41,46 +41,47 @@ export default function MeasurementInputs() {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex justify-between items-center">
-          <span>Enter Your Measurements</span>
-          <div className="flex gap-2">
+    <Card className="w-full max-w-md shadow-md">
+      <CardHeader className="py-2 px-4">
+        <CardTitle className="flex justify-between items-center text-sm">
+          <span>Your Measurements</span>
+          <div className="flex gap-1">
             <Button 
               variant="ghost" 
-              size="icon" 
+              size="sm" 
               onClick={() => handleGenderChange('male')}
-              className={gender === 'male' ? 'bg-slate-100 dark:bg-slate-800' : ''}
+              className={gender === 'male' ? 'bg-slate-100 dark:bg-slate-800 px-2' : 'px-2'}
             >
-              <User className="h-5 w-5" />
+              <User className="h-4 w-4" />
             </Button>
             <Button 
               variant="ghost" 
-              size="icon" 
+              size="sm" 
               onClick={() => handleGenderChange('female')}
-              className={gender === 'female' ? 'bg-slate-100 dark:bg-slate-800' : ''}
+              className={gender === 'female' ? 'bg-slate-100 dark:bg-slate-800 px-2' : 'px-2'}
             >
-              <Users className="h-5 w-5" />
+              <Users className="h-4 w-4" />
             </Button>
             <Button 
               variant="ghost" 
-              size="icon" 
+              size="sm" 
               onClick={resetMeasurements}
               title="Reset to default measurements"
+              className="px-2"
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className="h-3 w-3" />
             </Button>
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 py-2">
         <Tabs defaultValue="proportions" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-2 mb-4">
-            <TabsTrigger value="proportions">Body Proportions</TabsTrigger>
-            <TabsTrigger value="details">Detailed Measurements</TabsTrigger>
+          <TabsList className="grid grid-cols-2 mb-2">
+            <TabsTrigger value="proportions" className="text-xs py-1">Body Proportions</TabsTrigger>
+            <TabsTrigger value="details" className="text-xs py-1">Detailed Measurements</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="proportions" className="space-y-4">
+          <TabsContent value="proportions" className="space-y-3">
             <RangeSlider
               label="Height"
               unit="cm"
@@ -89,7 +90,7 @@ export default function MeasurementInputs() {
               step={1}
               value={[measurements.height]}
               onValueChange={(value) => handleMeasurementChange('height', value[0])}
-              className="mt-6"
+              className="mt-2"
             />
             
             <RangeSlider
@@ -123,7 +124,7 @@ export default function MeasurementInputs() {
             />
           </TabsContent>
           
-          <TabsContent value="details" className="space-y-4">
+          <TabsContent value="details" className="space-y-3">
             <RangeSlider
               label="Shoulders Width"
               unit="cm"
@@ -132,6 +133,7 @@ export default function MeasurementInputs() {
               step={1}
               value={[measurements.shoulders]}
               onValueChange={(value) => handleMeasurementChange('shoulders', value[0])}
+              className="mt-2"
             />
             
             <RangeSlider
@@ -166,15 +168,15 @@ export default function MeasurementInputs() {
           </TabsContent>
         </Tabs>
 
-        <div className="mt-6">
+        <div className="mt-3">
           <Button 
-            className="w-full" 
+            className="w-full text-xs py-1 h-auto" 
             style={{ 
               backgroundColor: settings.primaryColor,
               color: 'white'
             }}
           >
-            Apply Measurements
+            Apply
           </Button>
         </div>
       </CardContent>

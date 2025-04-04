@@ -70,22 +70,7 @@ function Scene() {
         decay={2}
       />
       
-      {/* Elegant floor with gradient */}
-      <mesh position={[0, -1.0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[6, 128]} />
-        <meshStandardMaterial 
-          color="#f8fafc" 
-          roughness={0.1}
-          metalness={0.1}
-          envMapIntensity={0.8}
-        />
-      </mesh>
-      
-      {/* Subtle shadow catcher */}
-      <mesh position={[0, -0.99, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[4, 64]} />
-        <shadowMaterial opacity={0.2} transparent />
-      </mesh>
+      {/* Removed floor as requested */}
       
       {/* Mannequin */}
       <MannequinModel />
