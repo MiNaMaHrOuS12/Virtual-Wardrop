@@ -32,7 +32,7 @@ export default function Home() {
           </div>
           
           <DndProvider backend={HTML5Backend}>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Left column - Measurement inputs */}
               <div className="order-2 lg:order-1 lg:max-h-[700px] lg:overflow-y-auto custom-scrollbar">
                 <h2 className="text-xl font-semibold mb-4 px-2 sticky top-0 bg-slate-50 dark:bg-slate-950 py-2 z-10">Your Measurements</h2>
@@ -40,7 +40,7 @@ export default function Home() {
               </div>
               
               {/* Middle column - 3D Scene */}
-              <div className="order-1 lg:order-2 h-[500px] lg:h-[700px]">
+              <div className="order-1 lg:order-2 h-[500px] lg:h-[700px] lg:col-span-2">
                 <h2 className="text-xl font-semibold mb-4 px-2">Your Virtual Mannequin</h2>
                 <ThreeDScene />
                 

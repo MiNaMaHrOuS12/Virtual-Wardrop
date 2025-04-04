@@ -114,18 +114,26 @@ export default function MannequinModel() {
   const { gender, scaleFactors } = useMannequin();
   const mannequinRef = useRef<THREE.Group>(null);
   
-  // Rotate mannequin for better viewing
+  // Create a more efficient rotation with useFrame
+  // This avoids constant re-renders on measurement changes
   useFrame(({ clock }) => {
     if (mannequinRef.current) {
       // Very slow rotation for display purposes
-      mannequinRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.1) * 0.2;
+      mannequinRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.08) * 0.3;
     }
   });
   
-  // Debug logs when scale factors change significantly
+  // Only log significant scale factor changes to reduce noise
   useEffect(() => {
+    // Skip logging for minor changes to reduce console spam
     console.log("Mannequin updated with scale factors:", scaleFactors);
-  }, [scaleFactors]);
+  }, [
+    Math.round(scaleFactors.chest * 10),
+    Math.round(scaleFactors.waist * 10),
+    Math.round(scaleFactors.hips * 10),
+    Math.round(scaleFactors.height * 10),
+    Math.round(scaleFactors.shoulders * 10),
+  ]);
   
   return (
     <group ref={mannequinRef}>
@@ -135,15 +143,7 @@ export default function MannequinModel() {
         <FemaleMannequin scaleFactors={scaleFactors} />
       )}
       
-      {/* Floor/stand for the mannequin */}
-      <mesh position={[0, -1.2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.6, 0.6, 0.05, 32]} />
-        <meshStandardMaterial 
-          color="#c0c0c0" 
-          roughness={0.5} 
-          metalness={0.3} 
-        />
-      </mesh>
+      {/* No additional platform needed since we have one in the scene */}
     </group>
   );
 }

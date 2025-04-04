@@ -22,35 +22,33 @@ function Scene() {
   return (
     <>
       {/* Environment and lighting */}
-      <ambientLight intensity={0.7} />
+      <ambientLight intensity={0.8} />
       <directionalLight 
         position={[5, 5, 5]} 
-        intensity={1.2} 
+        intensity={1.3} 
         castShadow 
         shadow-mapSize={[2048, 2048]}
       />
       <directionalLight 
         position={[-5, 5, -5]} 
-        intensity={0.6} 
+        intensity={0.7} 
       />
       <spotLight
         position={[0, 10, 0]}
-        intensity={0.8}
+        intensity={0.9}
         angle={0.4}
         penumbra={0.3}
         castShadow
       />
       
-      {/* Floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.0, 0]} receiveShadow>
-        <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color="#f8f9fa" />
-      </mesh>
-      
-      {/* Circular platform for mannequin */}
-      <mesh position={[0, -0.99, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[1.5, 32]} />
-        <meshStandardMaterial color="#e9ecef" />
+      {/* Floor - a single unified platform with a subtle gradient */}
+      <mesh position={[0, -1.0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <circleGeometry args={[2.5, 64]} />
+        <meshStandardMaterial 
+          color="#f8f9fa" 
+          roughness={0.3}
+          metalness={0.1}
+        />
       </mesh>
       
       {/* Mannequin */}
@@ -61,8 +59,8 @@ function Scene() {
         enablePan={false}
         minPolarAngle={Math.PI / 6}
         maxPolarAngle={Math.PI / 2.2}
-        minDistance={2}
-        maxDistance={5}
+        minDistance={1.5}
+        maxDistance={4}
         target={[0, 0.5, 0]}
         makeDefault
       />
@@ -131,8 +129,15 @@ export default function ThreeDScene() {
         shadows
         camera={{ position: [0, 0.5, 3.5], fov: 45 }}
         style={{ background: "linear-gradient(to bottom, #e0f2fe, #ffffff)" }}
-        gl={{ antialias: true }}
-        dpr={[1, 2]}
+        gl={{ 
+          antialias: true,
+          alpha: true,
+          preserveDrawingBuffer: true,
+          powerPreference: "high-performance"
+        }}
+        frameloop="demand"
+        performance={{ min: 0.5 }}
+        dpr={[1, 1.5]}
       >
         <Suspense fallback={<Loader />}>
           <Scene />
