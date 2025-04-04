@@ -83,8 +83,10 @@ function Scene() {
       
       {/* Removed floor as requested */}
       
-      {/* Mannequin */}
-      <MannequinModel />
+      {/* Centered mannequin for better visibility when zooming */}
+      <group position={[0, 0.7, 0]}>
+        <MannequinModel />
+      </group>
       
       {/* Enhanced orbit controls for better user experience */}
       <OrbitControls 
@@ -93,7 +95,7 @@ function Scene() {
         maxPolarAngle={Math.PI / 2.2}
         minDistance={1.5}
         maxDistance={4}
-        target={[0, 0.7, 0]}
+        target={[0, 1.4, 0]} // Updated to match the vertically centered mannequin
         makeDefault
         enableDamping={true}
         dampingFactor={0.05}
@@ -186,7 +188,7 @@ export default function ThreeDScene() {
     >
       <Canvas
         shadows
-        camera={{ position: [0, 0.8, 2.5], fov: 40 }}
+        camera={{ position: [0, 1.2, 2.5], fov: 45 }}
         style={{ 
           background: "transparent", 
           height: "100%", 
