@@ -82,7 +82,7 @@ function Scene() {
         maxPolarAngle={Math.PI / 2.5}
         minDistance={1.2}
         maxDistance={5}
-        target={[0, 0.0, 0]}
+        target={[0, 1.0, 0]}
         makeDefault
         enableDamping={true}
         dampingFactor={0.05}
@@ -175,7 +175,7 @@ export default function ThreeDScene() {
     >
       <Canvas
         shadows
-        camera={{ position: [0, 0, 3.0], fov: 30 }}
+        camera={{ position: [0, 1.0, 3.0], fov: 30 }}
         style={{ 
           background: "transparent", 
           height: "100%", 

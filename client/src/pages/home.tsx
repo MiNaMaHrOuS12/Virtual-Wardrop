@@ -34,8 +34,7 @@ export default function Home() {
           <DndProvider backend={HTML5Backend}>
             {/* Full screen mannequin section */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4 px-2">Your Virtual Mannequin</h2>
-              <div className="h-screen max-h-[80vh]">
+              <div className="h-screen max-h-[80vh] flex items-center justify-center">
                 <ThreeDScene />
               </div>
               
