@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useMannequin } from "@/lib/stores/useMannequin";
 import * as THREE from "three";
@@ -59,27 +59,89 @@ const FemaleMannequin: React.FC<MannequinProps> = ({ scaleFactors }) => {
 function useMannequin3DModel(originalScene: THREE.Object3D, scaleFactors: ScaleFactors): THREE.Object3D {
   const modelRef = useRef<THREE.Object3D | null>(null);
   
+  // Use memo to create a stable reference to the most current scale factors
+  const latestScaleFactors = useMemo(() => scaleFactors, [
+    Math.round(scaleFactors.chest * 100),
+    Math.round(scaleFactors.waist * 100),
+    Math.round(scaleFactors.hips * 100), 
+    Math.round(scaleFactors.height * 100),
+    Math.round(scaleFactors.shoulders * 100),
+    Math.round(scaleFactors.limbs * 100),
+    Math.round(scaleFactors.neck * 100)
+  ]);
+  
+  // Apply scales actively using useFrame
+  useFrame(() => {
+    if (!modelRef.current) return;
+    
+    const { height, chest, waist, hips, shoulders, limbs, neck } = latestScaleFactors;
+    
+    modelRef.current.traverse((node: THREE.Object3D) => {
+      if (!(node as THREE.Mesh).isMesh) return;
+      
+      // Only apply changes if we can identify this part
+      const name = node.name.toLowerCase();
+      const y = node.position.y;
+      
+      // Reset scale to avoid compounding effects
+      node.scale.set(1, 1, 1);
+      
+      // Chest/Torso area
+      if (name.includes('chest') || name.includes('torso') || name.includes('upper') || 
+          (y > 0.5 && y < 1.2)) {
+        node.scale.x = chest;
+        node.scale.z = chest;
+      } 
+      // Waist area
+      else if (name.includes('waist') || name.includes('abdomen') || name.includes('stomach') || 
+              (y > 0 && y < 0.5)) {
+        node.scale.x = waist;
+        node.scale.z = waist;
+      } 
+      // Hip area
+      else if (name.includes('hip') || name.includes('pelvis') || name.includes('thigh') || 
+              (y > -0.3 && y < 0)) {
+        node.scale.x = hips;
+        node.scale.z = hips;
+      }
+      // Shoulders
+      else if (name.includes('shoulder') || name.includes('clavicle') || 
+              (Math.abs(node.position.x) > 0.2 && y > 0.8)) {
+        node.scale.x = shoulders;
+        node.scale.z = shoulders * 0.5;
+      }
+      // Apply neck scaling
+      else if (name.includes('neck') || (y > 1.2 && y < 1.5)) {
+        node.scale.x = neck;
+        node.scale.z = neck;
+      }
+      // Apply limbs scaling
+      else if (name.includes('arm') || name.includes('leg') || 
+              (Math.abs(node.position.x) > 0.3 && y < 0.5)) {
+        node.scale.x = limbs;
+        node.scale.z = limbs;
+      }
+    });
+    
+    // Apply overall height scaling to the root
+    // First set to 1 to avoid compounding
+    modelRef.current.scale.y = 1;
+    modelRef.current.scale.y = height;
+  });
+  
   useEffect(() => {
     if (!originalScene) return;
     
     // Clone the original scene to avoid modifying the cached version
     const clonedScene = originalScene.clone(true);
     
-    // Apply scale factors to the model
-    const { height, chest, waist, hips, shoulders } = scaleFactors;
-    
-    // Set the model to the ref
-    modelRef.current = clonedScene;
-    
-    // Apply scaling to specific parts of the model
     // Debug: Log all node names to identify body parts
     console.log("Model hierarchy:", getNodeNameHierarchy(clonedScene));
     
-    // Apply material and scaling to the entire model
+    // Apply initial material settings
     clonedScene.traverse((node: THREE.Object3D) => {
       if ((node as THREE.Mesh).isMesh) {
         const meshNode = node as THREE.Mesh;
-        // Apply material settings for all meshes
         if (meshNode.material) {
           const material = meshNode.material as THREE.MeshStandardMaterial;
           const newMaterial = material.clone();
@@ -93,40 +155,11 @@ function useMannequin3DModel(originalScene: THREE.Object3D, scaleFactors: ScaleF
           meshNode.castShadow = true;
           meshNode.receiveShadow = true;
         }
-        
-        // Apply scale based on node name and position
-        const name = node.name.toLowerCase();
-        
-        // Safer approach with more specific matching and position-based scaling
-        // Chest/Torso area
-        if (name.includes('chest') || name.includes('torso') || name.includes('upper') || 
-            (node.position.y > 0.5 && node.position.y < 1.2)) {
-          node.scale.x *= chest;
-          node.scale.z *= chest;
-        } 
-        // Waist area
-        else if (name.includes('waist') || name.includes('abdomen') || name.includes('stomach') || 
-                (node.position.y > 0 && node.position.y < 0.5)) {
-          node.scale.x *= waist;
-          node.scale.z *= waist;
-        } 
-        // Hip area
-        else if (name.includes('hip') || name.includes('pelvis') || name.includes('thigh') || 
-                (node.position.y > -0.3 && node.position.y < 0)) {
-          node.scale.x *= hips;
-          node.scale.z *= hips;
-        }
-        // Shoulders
-        else if (name.includes('shoulder') || name.includes('clavicle') || 
-                (Math.abs(node.position.x) > 0.2 && node.position.y > 0.8)) {
-          node.scale.x *= shoulders;
-          node.scale.z *= shoulders * 0.5;
-        }
       }
     });
     
-    // Apply overall height scaling
-    clonedScene.scale.y *= height;
+    // Set the model to the ref
+    modelRef.current = clonedScene;
     
     return () => {
       // Clean up
@@ -144,7 +177,7 @@ function useMannequin3DModel(originalScene: THREE.Object3D, scaleFactors: ScaleF
         });
       }
     };
-  }, [originalScene, scaleFactors]);
+  }, [originalScene]); // Only recreate on original scene change
   
   return modelRef.current || originalScene.clone();
 };
